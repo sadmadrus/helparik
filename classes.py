@@ -9,3 +9,5 @@ class Bot(ABC):
     @abstractmethod
     def GetCommand(self):
         pass
+    def SendMessage(self, message):
+        pass

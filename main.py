@@ -13,3 +13,5 @@ if __name__ == '__main__':
         logging.error('Ключ бота не задан!')
     else:
         tgBot = TgBot(bot_key)
+        print("Бот запущен...")
+        tgBot.polling(none_stop=True)
