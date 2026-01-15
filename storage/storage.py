@@ -15,7 +15,7 @@ class User(Base):
 
     def __init__(self, name, user_id, first_name, last_name):
         self.name = name
-        self.userId = user_id
+        self.user_id = user_id
         self.first_name = first_name
         self.last_name = last_name
 
@@ -60,9 +60,10 @@ session = Session()
 
 def add_user(name, user_id, first_name, last_name):
     user = User(name, user_id, first_name, last_name)
+    print(user_id)
     session.add(user)
     session.commit()
-
+    return user
 
 def getCommetnBytech(technology):
     technology = Technology.query.filter_by(name=technology).first()

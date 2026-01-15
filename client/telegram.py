@@ -1,20 +1,24 @@
 import telebot
 
 from classes import Bot
-from command import command
+from client.command import command
 
 class TgBot(Bot):
     def __init__(self, bot_key):
        super().__init__(bot_key)
+       print('TgBot initialized')
        self.bot = telebot.TeleBot(self.bot_key)
+       self.GetCommand()
     def GetCommand(self):
-        @self.bot.message_handler()
+        @self.bot.message_handler(commands=['start', 'pon', 'fttx', 'adsl', 'docsis'])
         def reciveMessage(message):
-            if self.bot.utils.is_command(message.text):
-                command.doCommand(message.user, message.text)
+            if message.text.startswith('/'):
+                result = command.doCommand(message.from_user, message.text)
+                print(result)
+                self.SendMessage(message.chat.id, result)
 
-    def SendMessage(self, message):
-        self.bot.send_message(message.user.id, message.text)
+    def SendMessage(self, chatId, message):
+        self.bot.send_message(chatId, message)
 
     def polling(self, none_stop):
-       self.polling(none_stop=True)
+        self.bot.polling(none_stop)
