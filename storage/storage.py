@@ -59,16 +59,21 @@ session = Session()
 
 
 def add_user(name, user_id, first_name, last_name):
-    user = User(name, user_id, first_name, last_name)
-    print(user_id)
-    session.add(user)
-    session.commit()
-    return user
+    existing_user = session.query(User).filter_by(user_id=user_id).first()
+    session.query(User).filter_by(user_id=user_id).first()
+    if existing_user:
+        return existing_user
+    else:
+        user = User(name, user_id, first_name, last_name)
+        session.add(user)
+        session.commit()
+        return user
 
 def getCommetnBytech(technology):
-    technology = Technology.query.filter_by(name=technology).first()
-    if technology:
-        return Comment.query.filter_by(technology_id=technology.id).all()
+    tech = session.query(Technology).filter_by(name=technology).first()
+    if tech:
+        comments = session.query(Comment).filter_by(technology_id=tech.id).all()
+        return comments
     else:
-        print(technology)
+        print(f"Технология {technology} не найдена")
     return None
