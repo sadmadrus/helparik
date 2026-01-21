@@ -23,9 +23,20 @@ def get_main_menu():
     Основная клавиатура — остаётся внизу всегда
     """
     markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
-    for cmd in classes.BOT_COMMANDS:
+    for cmd in classes.main_menu:
         markup.row(telebot.types.KeyboardButton(f"/{cmd['command']}"))
 
+    return markup
+def build_inline_menu(menu_structure):
+    markup = telebot.types.InlineKeyboardMarkup()
+    if isinstance(menu_structure, list):
+        for item in menu_structure:
+            if isinstance(item, dict):
+                # Используем ключ 'command' для кнопки
+                markup.row(telebot.types.InlineKeyboardButton(f"/{item['command']}", callback_data=f"tech_{item['command']}"))
+            else:
+                # Если это просто строка
+                markup.row(telebot.types.InlineKeyboardButton(f"/{item}", callback_data=f"tech_{item}"))
     return markup
 
 def build_menu(menu_structure):
@@ -52,6 +63,11 @@ def doCommand(user, command):
             return {
                 "text": "Доступные команды: /start, /help, /pon, /fttx, /adsl, /docsis",
                 "reply_markup": get_main_menu()  # ✅ Клавиатура остаётся
+            }
+        case 'comments':
+            return {
+                "text": "Выберите технологию:",
+                "reply_markup": build_inline_menu(classes.technologies)  #
             }
         case 'pon' | 'fttx' | 'adsl' | 'docsis':
             comments = storage.getCommetnBytech(cmd)

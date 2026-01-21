@@ -10,14 +10,18 @@ class Bot(ABC):
         pass
 
 # Список команд для Telegram (для set_my_commands)
-BOT_COMMANDS = [
+main_menu = [
     {"command": "start", "description": "Запустить бота"},
     {"command": "help", "description": "Показать помощь"},
-    {"command": "fttx", "description": "Информация по FTTX"},
-    {"command": "pon", "description": "Информация по PON"},
-    {"command": "adsl", "description": "Информация по ADSL"},
-    {"command": "docsis", "description": "Информация по DOCSIS"},
+    {"command": "comments", "description": "Комментарии к оборудованию"},
     {"command": "stop", "description": "Остановить бота"},
     {"command": "timer", "description": "Управление таймером"},
+]
+
+technologies = [
+    {"command": "pon", "description": "Подключение по оптике"},
+    {"command": "fttx", "description": "Подключение по витой паре"},
+    {"command": "adsl", "description": "ADSL"},
+    {"command": "docsis", "description": "DOCSIS"},
 ]
 
