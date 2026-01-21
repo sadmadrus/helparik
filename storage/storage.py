@@ -75,5 +75,4 @@ def getCommetnBytech(technology):
         comments = session.query(Comment).filter_by(technology_id=tech.id).all()
         return comments
     else:
-        print(f"Технология {technology} не найдена")
-    return None
+        return None
