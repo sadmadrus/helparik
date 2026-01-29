@@ -15,7 +15,9 @@ main_menu = [
     {"command": "help", "description": "Показать помощь"},
     {"command": "comments", "description": "Комментарии к оборудованию"},
     {"command": "stop", "description": "Остановить бота"},
-    {"command": "timer", "description": "Управление таймером"},
+    {"command": "timer", "description": "Добавить комментарий с таймером (/timer <ВремяВМинутах> <комментарий>)"},
+    {"command": "mycomments", "description": "Мои комментарии по технологии (/mycomments <технология>)"},
+    {"command": "addcomment", "description": "Добавить комментарий по технологии (/addcomment <технология> <комментарий>)"},
 ]
 
 technologies = [

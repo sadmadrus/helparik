@@ -1,5 +1,6 @@
-from sqlalchemy import null
+import datetime
 
+import shlex
 import classes
 from storage import storage
 import telebot
@@ -50,9 +51,8 @@ def build_menu(menu_structure):
     return markup
 
 def doCommand(user, command):
-    cmd = command.strip().lower()
-
-    match cmd:
+    cmdList = shlex.split(command.lower())
+    match cmdList[0]:
         case 'start':
             storage.add_user(user.username, user.id, user.first_name, user.last_name)
             return {
@@ -61,7 +61,7 @@ def doCommand(user, command):
             }
         case 'help':
             return {
-                "text": "Доступные команды: /start, /help, /pon, /fttx, /adsl, /docsis",
+                "text": "Доступные команды: /start, /help, /pon, /fttx, /adsl, /docsis, /timer",
                 "reply_markup": get_main_menu()  # ✅ Клавиатура остаётся
             }
         case 'comments':
@@ -70,11 +70,46 @@ def doCommand(user, command):
                 "reply_markup": build_inline_menu(classes.technologies)  #
             }
         case 'pon' | 'fttx' | 'adsl' | 'docsis':
-            comments = storage.getCommetnBytech(cmd)
+            comments = storage.getCommetnBytech(cmdList[0])
             text = '\n'.join([c.comment for c in comments]) if comments else "Комментарии не найдены"
             return {
-                "text": f"Информация по {cmd.upper()}:\n{text}",
+                "text": f"Информация по {cmdList[0].upper()}:\n{text}",
                 "reply_markup": get_main_menu()  # ✅ Инлайн-кнопки
+            }
+        case 'timer':
+            if len(cmdList) < 3:
+                return {
+                    "text": "Введите время в минутах и комментарий через пробел:\nПример: /timer 30 моя заметка",
+                    "reply_markup": get_main_menu()
+                }
+            else:
+                # Используем предоставленные аргументы
+                try:
+                    minutes = int(cmdList[1])
+                    timer = datetime.datetime.now() + datetime.timedelta(minutes=minutes)
+                    message = ' '.join(cmdList[2:])  # Объединяем оставшиеся аргументы в комментарий
+
+                    # Создаем событие
+                    event = storage.addEvent(user.id, "remind", timer, message)
+                    print(event)
+                    return {
+                        "text": f"Событие добавлено на {minutes} минут:\n{message}",
+                        "reply_markup": get_main_menu()
+                    }
+                except ValueError:
+                    return {
+                        "text": "Ошибка: укажите корректное число минут",
+                        "reply_markup": get_main_menu()
+                    }
+        case 'mycomments':
+            return {
+                "text": "Ваши комментарии:",
+                "reply_markup": storage.GetCommetsByUserAndTechnology(user.id, cmdList[1].lower())  #
+            },
+        case 'addcomment':
+            return {
+                "text": "Введите комментарий:",
+                "reply_markup": storage.addComment(user.id, cmdList[1].lower(), cmdList[2])  #
             }
         case _:
             return {"text": "Неизвестная команда"}
